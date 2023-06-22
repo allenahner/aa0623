@@ -79,4 +79,28 @@ class CheckoutTest {
         Assertions.assertEquals(new BigDecimal("1.50"), agreement.discountAmount());
         Assertions.assertEquals(new BigDecimal("1.49"), agreement.finalCharge());
     }
+
+    @Test
+    void test7() {
+        Assertions.assertThrowsExactly(IllegalArgumentException.class, () -> Checkout.checkoutTool("JAKR", 0, 20, "9/3/15"), "Rental day count must be 1 or greater.");
+    }
+
+    @Test
+    void test8() {
+        Assertions.assertThrowsExactly(IllegalArgumentException.class, () -> Checkout.checkoutTool("ILGL", 1, 20, "9/3/15"), "Invalid tool code: ILGL");
+    }
+
+    @Test
+    void test9() {
+        RentalAgreement agreement = Checkout.checkoutTool("JAKR", 4, 50, "7/02/21");
+        Assertions.assertEquals(4, agreement.rentalDays());
+        Assertions.assertEquals("07/02/21", agreement.checkoutDate().format(DateTimeFormatter.ofPattern("MM/dd/yy")));
+        Assertions.assertEquals("07/06/21", agreement.dueDate().format(DateTimeFormatter.ofPattern("MM/dd/yy")));
+        Assertions.assertEquals(new BigDecimal("2.99"), agreement.dailyRentalCharge());
+        Assertions.assertEquals(1, agreement.chargeDays());
+        Assertions.assertEquals(new BigDecimal("2.99"), agreement.preDiscountCharge());
+        Assertions.assertEquals(50, agreement.discountPercent());
+        Assertions.assertEquals(new BigDecimal("1.50"), agreement.discountAmount());
+        Assertions.assertEquals(new BigDecimal("1.49"), agreement.finalCharge());
+    }
 }
